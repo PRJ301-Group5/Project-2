@@ -15,6 +15,9 @@
         <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/projects">
             🚀 Spirit · Group 5
         </a>
+        <a class="btn btn-sm btn-outline-light" href="${pageContext.request.contextPath}/exports">
+            📁 Export History
+        </a>
     </div>
 </nav>
 

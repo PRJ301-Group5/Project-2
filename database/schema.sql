@@ -140,3 +140,20 @@ VALUES
 (1, 4, 'dung.pham@email.com',      N'Member'),
 (1, 5, 'em.hoang@email.com',       N'Member');
 GO
+
+-- -------------------------------------------------------------
+-- 7. ExportHistory (audit + file pointer for CSV exports)
+-- -------------------------------------------------------------
+IF OBJECT_ID('dbo.ExportHistory', 'U') IS NULL
+CREATE TABLE dbo.ExportHistory (
+    history_id        INT IDENTITY(1,1) PRIMARY KEY,
+    project_id        INT NOT NULL,
+    exported_by       NVARCHAR(100),
+    file_name         NVARCHAR(255) NOT NULL,
+    file_path         NVARCHAR(500) NOT NULL,
+    file_bytes        INT,
+    row_count         INT,
+    exported_at       DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_EH_Project FOREIGN KEY (project_id) REFERENCES dbo.Project(project_id)
+);
+GO
