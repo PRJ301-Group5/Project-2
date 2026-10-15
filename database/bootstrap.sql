@@ -132,7 +132,7 @@ GO
 IF NOT EXISTS (SELECT 1 FROM dbo.Project WHERE project_code = 'PRJ301_G5')
 INSERT INTO dbo.Project (project_code, project_name, repo_url, local_path, start_date, end_date)
 VALUES ('PRJ301_G5', N'Spirit - Git Analytics Module',
-        'https://github.com/Spirit-team/Spirit-backend',
+        'https://github.com/PRJ301-Group5/Project-2',
         'C:/repos/Spirit-demo', '2026-09-01', '2026-11-15');
 GO
 
