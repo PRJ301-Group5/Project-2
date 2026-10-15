@@ -52,6 +52,8 @@
                                class="btn btn-sm btn-primary">📊 Dashboard</a>
                             <a href="${pageContext.request.contextPath}/commits?projectId=${p.projectId}"
                                class="btn btn-sm btn-outline-secondary">📝 Commits</a>
+                            <a href="${pageContext.request.contextPath}/export.csv?projectId=${p.projectId}"
+                               class="btn btn-sm btn-outline-info">📥 Export CSV</a>
                             <form action="${pageContext.request.contextPath}/analyze"
                                   method="post" style="display:inline">
                                 <input type="hidden" name="projectId" value="${p.projectId}">
