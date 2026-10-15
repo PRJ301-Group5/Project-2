@@ -21,7 +21,10 @@ sqlcmd -S localhost -E -b -i database\grading_schema.sql
 # (đã chạy 1 lần - hash BCrypt của "Password@123")
 # SELECT username, password_hash FROM AppUser;
 
-# 4. Build + chạy Jetty
+# 4. (Tuỳ chọn) Tạo local Git repo demo để test Git Analytics
+powershell -ExecutionPolicy Bypass -File database\setup_demo_repo.ps1
+
+# 5. Build + chạy Jetty
 mvn clean package -DskipTests
 mvn jetty:run-war
 ```
