@@ -1,5 +1,8 @@
 # Spirit - Git Analytics Teamwork Assessor
 
+**Repository**: <https://github.com/PRJ301-Group5/Project-2> (Nhóm 5 — PRJ301)
+**Team page**:  <https://github.com/PRJ301-Group5/PRJ301_G5>
+
 ## 🚀 Quick Start (đã test thành công trên máy local)
 
 ### Yêu cầu (đã cài)

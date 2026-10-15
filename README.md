@@ -4,6 +4,9 @@
 > Hệ thống hỗ trợ **giảng viên tạo bài tập → sinh viên nộp bài → giảng viên chấm điểm**,
 > kèm thông báo deadline tự động và phân tích Git cho dự án nhóm.
 
+**Repository**: <https://github.com/PRJ301-Group5/Project-2> (Nhóm 5 — PRJ301)
+**Team page**:  <https://github.com/PRJ301-Group5/PRJ301_G5>
+
 ---
 
 ## 🏃 Chạy nhanh
