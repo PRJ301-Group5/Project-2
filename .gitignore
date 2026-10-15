@@ -1,0 +1,64 @@
+# =============================================================
+# Spirit - .gitignore (Java/Maven/Servlet)
+# =============================================================
+
+# --- Maven build output ---
+target/
+*.war
+*.jar
+!database/seed/*.jar
+
+# --- IDE ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+!.vscode/settings.json
+.classpath
+.project
+.settings/
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
+logs/
+*.log.*
+
+# --- Temporary / backup ---
+*.bak
+*.tmp
+*.swp
+*.swo
+*~
+
+# --- Backup folder (created by Spirit rename) ---
+Group5_GitAnalytics_BACKUP_BEFORE_SPIRIT/
+
+# --- Sensitive: database credentials ---
+database/connection.properties
+*.env
+
+# --- Java specific ---
+*.class
+*.ear
+hs_err_pid*
+
+# --- Eclipse ---
+.project
+.classpath
+.factorypath
+.settings/
+
+# --- NetBeans ---
+nb-project.properties
+nb-configuration.xml
