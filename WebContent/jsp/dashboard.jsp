@@ -118,7 +118,7 @@
                                                 <i class="bi bi-journal-text"></i> Bài tập
                                             </a>
                                             <a class="btn btn-sm btn-outline-primary"
-                                               href="${pageContext.request.contextPath}/dashboard?projectId=${c.projectId}">
+                                               href="${pageContext.request.contextPath}/projects">
                                                 <i class="bi bi-graph-up"></i> Analytics
                                             </a>
                                         </div>
