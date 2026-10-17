@@ -4,51 +4,85 @@
 <c:set var="pageTitle" value="${assignment.title}" scope="request"/>
 <jsp:include page="header.jsp"/>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-white">
-                <h4 class="mb-0">${assignment.title}</h4>
-                <p class="mb-0 small text-muted">
-                    Lớp: <code>${assignment.classCode}</code> ·
-                    Deadline: <fmt:formatDate value="${assignment.dueDate}" pattern="dd/MM/yyyy HH:mm"/> ·
-                    Max: ${assignment.maxScore} điểm
-                </p>
+<div class="page-head fade-in">
+    <div>
+        <h1 class="title">
+            <span class="icon-box"><i class="bi bi-journal-bookmark"></i></span>
+            ${assignment.title}
+        </h1>
+        <p class="subtitle">
+            <i class="bi bi-people"></i> Lớp <code>${assignment.classCode}</code> ·
+            <i class="bi bi-calendar-event"></i> Deadline <fmt:formatDate value="${assignment.dueDate}" pattern="dd/MM/yyyy HH:mm"/> ·
+            <i class="bi bi-trophy"></i> Tối đa ${assignment.maxScore} điểm
+        </p>
+    </div>
+    <div class="actions">
+        <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/app/assignments">
+            <i class="bi bi-arrow-left"></i> Danh sách
+        </a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card shadow-sm fade-in card-feature">
+            <div class="card-header">
+                <h5><i class="bi bi-card-text"></i> Mô tả bài tập</h5>
             </div>
             <div class="card-body">
-                <h6>Mô tả:</h6>
-                <p>${assignment.description}</p>
+                <p class="mb-0">${assignment.description}</p>
 
                 <c:if test="${sessionScope.role == 'STUDENT'}">
-                    <hr>
+                    <hr class="my-4">
                     <c:choose>
                         <c:when test="${not empty mySubmission}">
-                            <h6><i class="bi bi-check-circle text-success"></i> Bạn đã nộp bài</h6>
-                            <p><strong>Nội dung:</strong> ${mySubmission.content}</p>
-                            <c:if test="${not empty mySubmission.filePath}">
-                                <p><strong>File:</strong> <a href="${mySubmission.filePath}" target="_blank">${mySubmission.filePath}</a></p>
-                            </c:if>
+                            <h6 class="grade-section-title">
+                                <i class="bi bi-check-circle text-success"></i> Bạn đã nộp bài
+                            </h6>
+                            <div class="alert alert-info">
+                                <strong>Nội dung:</strong>
+                                <p class="mb-2 mt-1">${mySubmission.content}</p>
+                                <c:if test="${not empty mySubmission.filePath}">
+                                    <strong>File:</strong>
+                                    <a href="${mySubmission.filePath}" target="_blank" rel="noopener">${mySubmission.filePath}</a>
+                                </c:if>
+                            </div>
+
                             <c:choose>
                                 <c:when test="${mySubmission.score != null}">
-                                    <div class="alert alert-success">
-                                        <strong>Điểm: ${mySubmission.score} / ${assignment.maxScore}</strong><br>
-                                        Feedback: ${mySubmission.feedback}
+                                    <div class="grade-score-box">
+                                        <div class="score">${mySubmission.score}<span class="score-max"> / ${assignment.maxScore}</span></div>
+                                        <div class="score-hint">Điểm của bạn</div>
                                     </div>
+                                    <c:if test="${not empty mySubmission.feedback}">
+                                        <div class="alert alert-success mt-3">
+                                            <strong><i class="bi bi-chat-quote"></i> Feedback từ giảng viên:</strong>
+                                            <p class="mb-0 mt-1">${mySubmission.feedback}</p>
+                                        </div>
+                                    </c:if>
                                 </c:when>
                                 <c:otherwise>
-                                    <div class="alert alert-info">Chưa được chấm điểm.</div>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-hourglass-split"></i> Bài của bạn đang chờ được chấm.
+                                    </div>
                                 </c:otherwise>
                             </c:choose>
-                            <a class="btn btn-warning"
+
+                            <a class="btn btn-orange spirit-loading"
                                href="${pageContext.request.contextPath}/app/submissions?assignmentId=${assignment.assignmentId}">
                                 <i class="bi bi-pencil"></i> Sửa bài
                             </a>
                         </c:when>
                         <c:otherwise>
-                            <a class="btn btn-primary"
-                               href="${pageContext.request.contextPath}/app/submissions?assignmentId=${assignment.assignmentId}">
-                                <i class="bi bi-upload"></i> Nộp bài
-                            </a>
+                            <div class="empty-state" style="padding: 32px 16px;">
+                                <div class="empty-icon"><i class="bi bi-upload"></i></div>
+                                <h6>Bạn chưa nộp bài</h6>
+                                <p>Hãy nộp bài trước deadline để được chấm điểm.</p>
+                                <a class="btn btn-primary btn-lg spirit-loading mt-2"
+                                   href="${pageContext.request.contextPath}/app/submissions?assignmentId=${assignment.assignmentId}">
+                                    <i class="bi bi-cloud-upload"></i> Nộp bài ngay
+                                </a>
+                            </div>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -57,36 +91,43 @@
     </div>
 
     <c:if test="${sessionScope.role == 'TEACHER' || sessionScope.role == 'ADMIN'}">
-        <div class="col-md-4">
-            <div class="card shadow">
-                <div class="card-header bg-white">
-                    <h6 class="mb-0"><i class="bi bi-people"></i> Bài nộp (${submissions.size()})</h6>
+        <div class="col-lg-4">
+            <div class="card shadow-sm fade-in">
+                <div class="card-header">
+                    <h5><i class="bi bi-people"></i> Bài nộp</h5>
+                    <span class="pill pill-navy">${submissions.size()}</span>
                 </div>
                 <div class="card-body p-0">
                     <c:choose>
                         <c:when test="${empty submissions}">
-                            <p class="text-muted text-center py-3 m-0">
-                                <i class="bi bi-inbox"></i> Chưa có bài nộp.
-                            </p>
+                            <div class="empty-state">
+                                <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+                                <h6>Chưa có bài nộp</h6>
+                                <p>Chờ sinh viên nộp bài.</p>
+                            </div>
                         </c:when>
                         <c:otherwise>
                             <ul class="list-group list-group-flush">
                                 <c:forEach var="s" items="${submissions}">
                                     <li class="list-group-item">
-                                        <strong>${s.studentName}</strong><br>
-                                        <small class="text-muted">
-                                            <fmt:formatDate value="${s.submittedAt}" pattern="dd/MM HH:mm"/>
-                                        </small>
-                                        <c:choose>
-                                            <c:when test="${s.score != null}">
-                                                <span class="badge bg-success float-end">${s.score}</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badge bg-secondary float-end">Chưa chấm</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <br>
-                                        <a class="btn btn-sm btn-outline-primary mt-1"
+                                        <div class="d-flex justify-content-between align-items-start gap-2">
+                                            <div class="flex-grow-1">
+                                                <strong class="d-block">${s.studentName}</strong>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-clock"></i>
+                                                    <fmt:formatDate value="${s.submittedAt}" pattern="dd/MM HH:mm"/>
+                                                </small>
+                                            </div>
+                                            <c:choose>
+                                                <c:when test="${s.score != null}">
+                                                    <span class="pill pill-success">${s.score}</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="pill pill-warning">Chờ chấm</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                        <a class="btn btn-sm btn-outline-primary mt-2"
                                            href="${pageContext.request.contextPath}/app/teacher/grading?submissionId=${s.submissionId}">
                                             <i class="bi bi-pencil-square"></i> Chấm
                                         </a>

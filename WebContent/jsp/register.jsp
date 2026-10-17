@@ -1,68 +1,73 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitle" value="Đăng ký" scope="request"/>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <title>Đăng ký · Spirit</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/app.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/app.css?v=2.0">
 </head>
 <body class="bg-spirit auth-bg">
 <div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
-                <div class="card-body p-4">
-                    <h3 class="fw-bold mb-3"><i class="bi bi-person-plus"></i> Đăng ký tài khoản</h3>
-
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6 col-xl-5">
+            <div class="auth-card fade-in">
+                <div class="auth-head">
+                    <div class="mark-lg"><i class="bi bi-person-plus-fill"></i></div>
+                    <h2>Tạo tài khoản</h2>
+                    <p class="sub">Đăng ký để bắt đầu sử dụng Spirit.</p>
+                </div>
+                <div class="auth-body">
                     <c:if test="${not empty error}">
-                        <div class="alert alert-danger">${error}</div>
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i> ${error}
+                        </div>
                     </c:if>
 
-                    <form method="post" action="${pageContext.request.contextPath}/register" novalidate>
-                        <div class="mb-2">
+                    <form method="post" action="${pageContext.request.contextPath}/register" novalidate class="spirit-auto-submit">
+                        <div class="mb-3">
                             <label class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control" required minlength="3" maxlength="50"
-                                   value="${param.username}" placeholder="3-50 ký tự">
+                            <input type="text" name="username" class="form-control" required minlength="3" maxlength="50" value="${param.username}" placeholder="3-50 ký tự, không dấu">
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-2">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Mật khẩu</label>
-                                <input type="password" name="password" class="form-control" required minlength="6">
+                                <input type="password" name="password" class="form-control" required minlength="6" placeholder="Tối thiểu 6 ký tự">
                             </div>
-                            <div class="col-md-6 mb-2">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Xác nhận</label>
-                                <input type="password" name="confirm" class="form-control" required minlength="6">
+                                <input type="password" name="confirm" class="form-control" required minlength="6" placeholder="Nhập lại">
                             </div>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Họ và tên</label>
-                            <input type="text" name="fullName" class="form-control" required maxlength="100"
-                                   value="${param.fullName}">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required
-                                   value="${param.email}" placeholder="example@fpt.edu.vn">
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text" name="fullName" class="form-control" required maxlength="100" value="${param.fullName}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" required value="${param.email}" placeholder="example@fpt.edu.vn">
+                        </div>
+                        <div class="mb-4">
                             <label class="form-label">Vai trò</label>
                             <select name="role" class="form-select" required>
-                                <option value="STUDENT" ${param.role == 'STUDENT' ? 'selected' : ''}>Student</option>
-                                <option value="TEACHER" ${param.role == 'TEACHER' ? 'selected' : ''}>Teacher</option>
+                                <option value="STUDENT" ${param.role == 'STUDENT' ? 'selected' : ''}>Student — sinh viên</option>
+                                <option value="TEACHER" ${param.role == 'TEACHER' ? 'selected' : ''}>Teacher — giảng viên</option>
                             </select>
                         </div>
-                        <button class="btn btn-primary w-100">
+                        <button class="btn btn-primary btn-lg w-100 spirit-loading">
                             <i class="bi bi-send"></i> Gửi mã OTP
                         </button>
                     </form>
                     <hr>
                     <div class="text-center">
-                        <a href="${pageContext.request.contextPath}/login">Đã có tài khoản? Đăng nhập</a>
+                        <a href="${pageContext.request.contextPath}/login">Đã có tài khoản? <strong>Đăng nhập</strong></a>
                     </div>
                 </div>
             </div>
