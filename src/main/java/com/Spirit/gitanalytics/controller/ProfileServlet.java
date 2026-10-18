@@ -36,8 +36,6 @@ public class ProfileServlet extends HttpServlet {
             if ("updateInfo".equals(action)) {
                 user.setFullName(req.getParameter("fullName"));
                 user.setPhone(req.getParameter("phone"));
-                userDAO.updatePassword(user.getUserId(), user.getPasswordHash()); // placeholder
-                // Cập nhật thông tin (gọi update cụ thể)
                 userDAO.updateInfo(user);
                 session.setAttribute("currentUser", user);
                 req.setAttribute("flash", "Đã cập nhật thông tin.");
