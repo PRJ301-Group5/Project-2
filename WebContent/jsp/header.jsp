@@ -67,12 +67,18 @@
             </a>
 
             <c:if test="${sessionScope.role == 'TEACHER' || sessionScope.role == 'ADMIN'}">
+                <a class="nav-pill" href="${pageContext.request.contextPath}/app/classes">
+                    <i class="bi bi-collection"></i> Lớp học
+                </a>
                 <a class="nav-pill" href="${pageContext.request.contextPath}/app/assignments">
                     <i class="bi bi-journal-text"></i> Quản lý bài tập
                 </a>
             </c:if>
 
             <c:if test="${sessionScope.role == 'STUDENT'}">
+                <a class="nav-pill" href="${pageContext.request.contextPath}/app/enroll">
+                    <i class="bi bi-key"></i> Vào lớp bằng mã
+                </a>
                 <a class="nav-pill" href="${pageContext.request.contextPath}/app/subjects">
                     <i class="bi bi-book"></i> Môn học
                 </a>

@@ -834,3 +834,82 @@ body.auth-bg {
 .navbar.bg-primary { background: var(--bg-surface) !important; box-shadow: var(--shadow-sm); }
 .bg-primary { background-color: var(--spirit-navy) !important; }
 .text-primary { color: var(--spirit-navy) !important; }
+
+/* ----------------------------- File upload UI ----------------------------- */
+.file-drop {
+    border: 2px dashed var(--border-medium);
+    border-radius: var(--r-md);
+    padding: 32px 16px;
+    text-align: center;
+    background: var(--bg-muted);
+    cursor: pointer;
+    transition: all var(--t-fast) var(--ease);
+    position: relative;
+}
+.file-drop:hover { border-color: var(--spirit-navy); background: var(--spirit-navy-tint); }
+.file-drop.dragover { border-color: var(--spirit-orange); background: var(--spirit-orange-tint); }
+.file-drop input[type="file"] {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+}
+.file-drop-icon {
+    font-size: 2.5rem;
+    color: var(--spirit-navy);
+    margin-bottom: 8px;
+}
+.file-drop-text { color: var(--text-default); font-size: 0.95rem; }
+.file-drop-text a { color: var(--spirit-orange); font-weight: 600; text-decoration: underline; }
+.file-drop-hint { color: var(--text-muted); font-size: 0.8rem; margin-top: 6px; }
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-sm);
+    transition: all var(--t-fast) var(--ease);
+}
+.file-item:hover { border-color: var(--border-medium); box-shadow: var(--shadow-xs); }
+.file-item.uploaded { background: var(--success-tint); border-color: #A7F3D0; }
+.file-item .file-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: var(--spirit-navy-tint);
+    color: var(--spirit-navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.file-item .file-icon.orange { background: var(--spirit-orange-tint); color: var(--spirit-orange); }
+.file-item .file-info { flex: 1; min-width: 0; }
+.file-item .file-name {
+    display: block;
+    font-weight: 500;
+    color: var(--text-strong);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.file-item a.file-name { color: var(--spirit-navy); }
+.file-item a.file-name:hover { color: var(--spirit-orange); }
+.file-item .file-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ----------------------------- Form check switch override ----------------------------- */
+.form-check-input:checked {
+    background-color: var(--spirit-navy);
+    border-color: var(--spirit-navy);
+}
+.form-check-input:focus { box-shadow: 0 0 0 0.18rem rgba(30, 58, 138, 0.20); }
+.form-switch .form-check-input { width: 2.5em; height: 1.4em; }

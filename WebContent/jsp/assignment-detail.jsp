@@ -30,10 +30,35 @@
                 <h5><i class="bi bi-card-text"></i> Mô tả bài tập</h5>
             </div>
             <div class="card-body">
-                <p class="mb-0">${assignment.description}</p>
+                <p class="mb-3">${assignment.description}</p>
+
+                <c:if test="${not empty assignmentFiles and assignmentFiles.size() > 0}">
+                    <h6 class="grade-section-title">
+                        <i class="bi bi-paperclip"></i> File đề bài (${assignmentFiles.size()})
+                    </h6>
+                    <ul class="file-list mb-3">
+                        <c:forEach var="f" items="${assignmentFiles}">
+                            <li class="file-item">
+                                <div class="file-icon ${f.contentType != null and f.contentType.contains('pdf') ? 'orange' : ''}">
+                                    <i class="bi bi-file-earmark${f.contentType != null and f.contentType.contains('pdf') ? '-pdf' : ''}"></i>
+                                </div>
+                                <div class="file-info">
+                                    <a class="file-name" href="${pageContext.request.contextPath}/app/files?type=assignment&id=${f.fileId}">${f.fileName}</a>
+                                    <div class="file-meta">
+                                        <span>${f.humanSize}</span> ·
+                                        <fmt:formatDate value="${f.uploadedAt}" pattern="dd/MM/yyyy HH:mm"/>
+                                    </div>
+                                </div>
+                                <a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/app/files?type=assignment&id=${f.fileId}">
+                                    <i class="bi bi-download"></i> Tải xuống
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </c:if>
 
                 <c:if test="${sessionScope.role == 'STUDENT'}">
-                    <hr class="my-4">
+                    <hr>
                     <c:choose>
                         <c:when test="${not empty mySubmission}">
                             <h6 class="grade-section-title">
@@ -47,6 +72,27 @@
                                     <a href="${mySubmission.filePath}" target="_blank" rel="noopener">${mySubmission.filePath}</a>
                                 </c:if>
                             </div>
+
+                            <c:if test="${not empty mySubmissionFiles and mySubmissionFiles.size() > 0}">
+                                <h6 class="grade-section-title">File đã nộp (${mySubmissionFiles.size()})</h6>
+                                <ul class="file-list mb-3">
+                                    <c:forEach var="f" items="${mySubmissionFiles}">
+                                        <li class="file-item uploaded">
+                                            <div class="file-icon"><i class="bi bi-file-earmark-check"></i></div>
+                                            <div class="file-info">
+                                                <a class="file-name" href="${pageContext.request.contextPath}/app/files?type=submission&id=${f.fileId}">${f.fileName}</a>
+                                                <div class="file-meta">
+                                                    <span>${f.humanSize}</span> ·
+                                                    <fmt:formatDate value="${f.uploadedAt}" pattern="dd/MM/yyyy HH:mm"/>
+                                                </div>
+                                            </div>
+                                            <a class="btn btn-sm btn-outline-primary" href="${pageContext.request.contextPath}/app/files?type=submission&id=${f.fileId}">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </c:if>
 
                             <c:choose>
                                 <c:when test="${mySubmission.score != null}">
@@ -117,6 +163,11 @@
                                                     <i class="bi bi-clock"></i>
                                                     <fmt:formatDate value="${s.submittedAt}" pattern="dd/MM HH:mm"/>
                                                 </small>
+                                                <c:if test="${subFilesMap[s.submissionId] != null and subFilesMap[s.submissionId].size() > 0}">
+                                                    <div class="mt-1">
+                                                        <span class="pill pill-muted"><i class="bi bi-paperclip"></i> ${subFilesMap[s.submissionId].size()} file</span>
+                                                    </div>
+                                                </c:if>
                                             </div>
                                             <c:choose>
                                                 <c:when test="${s.score != null}">

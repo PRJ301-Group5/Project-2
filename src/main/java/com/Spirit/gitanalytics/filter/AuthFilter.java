@@ -25,7 +25,7 @@ public class AuthFilter implements Filter {
 
     private static final List<String> PUBLIC_PREFIXES = Arrays.asList(
         "/login", "/register", "/otp", "/forgot", "/logout",
-        "/css/", "/js/", "/images/", "/index.jsp", "/projects"
+        "/css/", "/js/", "/images/", "/uploads/", "/index.jsp", "/projects"
     );
 
     @Override

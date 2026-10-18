@@ -12,12 +12,15 @@ public class ClassRoom {
     private String classCode;
     private String className;
     private String semester;
+    private String description;
+    private boolean joinEnabled = true;
     private Timestamp createdAt;
 
     // joined fields (optional, for display)
     private String subjectCode;
     private String subjectName;
     private String teacherName;
+    private int studentCount;
 
     public ClassRoom() {}
 
@@ -39,8 +42,17 @@ public class ClassRoom {
     public String getSemester() { return semester; }
     public void setSemester(String semester) { this.semester = semester; }
 
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public boolean isJoinEnabled() { return joinEnabled; }
+    public void setJoinEnabled(boolean joinEnabled) { this.joinEnabled = joinEnabled; }
+
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public int getStudentCount() { return studentCount; }
+    public void setStudentCount(int studentCount) { this.studentCount = studentCount; }
 
     public String getSubjectCode() { return subjectCode; }
     public void setSubjectCode(String subjectCode) { this.subjectCode = subjectCode; }

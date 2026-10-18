@@ -1,14 +1,16 @@
 package com.Spirit.gitanalytics.controller;
 
 import com.Spirit.gitanalytics.dao.AssignmentDAO;
+import com.Spirit.gitanalytics.dao.AssignmentFileDAO;
 import com.Spirit.gitanalytics.dao.ClassRoomDAO;
 import com.Spirit.gitanalytics.dao.SubjectDAO;
 import com.Spirit.gitanalytics.model.AppUser;
 import com.Spirit.gitanalytics.model.Assignment;
 import com.Spirit.gitanalytics.model.ClassRoom;
-import com.Spirit.gitanalytics.model.Subject;
+import com.Spirit.gitanalytics.util.FileUploadUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,12 +24,15 @@ import java.util.List;
 /**
  * AssignmentServlet - Quản lý bài tập (Teacher CRUD + Student list).
  * GET: list (lọc theo classId nếu có). POST: create / update / delete theo action.
+ *      Hỗ trợ multipart để upload file đề bài (multi-file).
  * URL: /app/assignments
  */
 @WebServlet(name = "AssignmentServlet", urlPatterns = {"/app/assignments"})
+@MultipartConfig(maxFileSize = 26 * 1024 * 1024, maxRequestSize = 200 * 1024 * 1024)
 public class AssignmentServlet extends HttpServlet {
 
     private final AssignmentDAO asmDao = new AssignmentDAO();
+    private final AssignmentFileDAO afDao = new AssignmentFileDAO();
     private final ClassRoomDAO classDao = new ClassRoomDAO();
     private final SubjectDAO subjDao = new SubjectDAO();
 
@@ -44,7 +49,6 @@ public class AssignmentServlet extends HttpServlet {
                     ? asmDao.findAll()
                     : asmDao.findByClass(Integer.parseInt(classIdParam));
             } else {
-                // Student: chỉ thấy assignment của các lớp mình tham gia
                 List<ClassRoom> myClasses = classDao.findByStudent(user.getUserId());
                 List<Integer> classIds = new java.util.ArrayList<>();
                 for (ClassRoom c : myClasses) classIds.add(c.getClassId());
@@ -52,7 +56,14 @@ public class AssignmentServlet extends HttpServlet {
             }
 
             req.setAttribute("assignments", assignments);
-            req.setAttribute("classes", classDao.findAll());
+            // Teacher: chỉ show các lớp mình dạy
+            if ("TEACHER".equals(user.getRole())) {
+                req.setAttribute("classes", classDao.findByTeacher(user.getUserId()));
+            } else if ("ADMIN".equals(user.getRole())) {
+                req.setAttribute("classes", classDao.findAll());
+            } else {
+                req.setAttribute("classes", classDao.findByStudent(user.getUserId()));
+            }
             req.getRequestDispatcher("/jsp/assignments.jsp").forward(req, resp);
         } catch (SQLException | ClassNotFoundException ex) {
             throw new ServletException(ex);
@@ -73,7 +84,7 @@ public class AssignmentServlet extends HttpServlet {
             if ("delete".equals(action)) {
                 int id = Integer.parseInt(req.getParameter("id"));
                 asmDao.delete(id);
-                req.getSession().setAttribute("flash", "Đã xoá bài tập #" + id);
+                session.setAttribute("flash", "Đã xoá bài tập #" + id);
             } else if ("update".equals(action)) {
                 int id = Integer.parseInt(req.getParameter("id"));
                 Assignment a = asmDao.findById(id);
@@ -83,7 +94,13 @@ public class AssignmentServlet extends HttpServlet {
                 a.setDueDate(Timestamp.valueOf(req.getParameter("dueDate").replace("T", " ") + ":00"));
                 a.setMaxScore(Double.parseDouble(req.getParameter("maxScore")));
                 asmDao.update(a);
-                req.getSession().setAttribute("flash", "Đã cập nhật bài tập #" + id);
+
+                // Thêm file đề mới nếu có upload
+                List<FileUploadUtil.UploadResult> uploaded = FileUploadUtil.saveFiles(req, "attachments", "assignments");
+                for (FileUploadUtil.UploadResult r : uploaded) {
+                    afDao.insert(r.toAssignmentFile(a.getAssignmentId(), user.getUserId()));
+                }
+                session.setAttribute("flash", "Đã cập nhật bài tập #" + id);
             } else {
                 Assignment a = new Assignment();
                 a.setClassId(Integer.parseInt(req.getParameter("classId")));
@@ -93,7 +110,12 @@ public class AssignmentServlet extends HttpServlet {
                 a.setMaxScore(Double.parseDouble(req.getParameter("maxScore")));
                 a.setCreatedBy(user.getUserId());
                 asmDao.insert(a);
-                req.getSession().setAttribute("flash", "Đã tạo bài tập mới.");
+
+                List<FileUploadUtil.UploadResult> uploaded = FileUploadUtil.saveFiles(req, "attachments", "assignments");
+                for (FileUploadUtil.UploadResult r : uploaded) {
+                    afDao.insert(r.toAssignmentFile(a.getAssignmentId(), user.getUserId()));
+                }
+                session.setAttribute("flash", "Đã tạo bài tập mới" + (uploaded.isEmpty() ? "." : " với " + uploaded.size() + " file đính kèm."));
             }
             resp.sendRedirect(req.getContextPath() + "/app/assignments");
         } catch (SQLException | ClassNotFoundException ex) {

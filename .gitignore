@@ -62,3 +62,9 @@ hs_err_pid*
 # --- NetBeans ---
 nb-project.properties
 nb-configuration.xml
+
+# --- Runtime data (uploads, gitanalytics exports) ---
+uploads/
+gitanalytics-exports/
+*.csv
+!database/**/*.csv

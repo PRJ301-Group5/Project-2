@@ -23,7 +23,8 @@
             <h5><i class="bi bi-plus-circle"></i> Tạo bài tập mới</h5>
         </div>
         <div class="card-body">
-            <form method="post" action="${pageContext.request.contextPath}/app/assignments" class="row g-3 spirit-auto-submit">
+            <form method="post" action="${pageContext.request.contextPath}/app/assignments"
+                  enctype="multipart/form-data" class="row g-3 spirit-auto-submit">
                 <div class="col-md-4">
                     <label class="form-label">Lớp</label>
                     <select name="classId" class="form-select" required>
@@ -47,6 +48,12 @@
                 <div class="col-md-2">
                     <label class="form-label">Điểm tối đa</label>
                     <input type="number" name="maxScore" class="form-control" required value="10" min="0" step="0.5">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">File đính kèm (đề bài, tài liệu, code mẫu…)</label>
+                    <input type="file" name="attachments" class="form-control" multiple
+                           accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.java,.py,.js,.ts,.html,.css,.json,.xml,.yml,.zip,.rar,.7z,.png,.jpg,.jpeg,.gif,.svg">
+                    <small class="text-muted">Có thể chọn nhiều file. Tối đa 25 MB / file.</small>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-primary w-100 spirit-loading" type="submit">

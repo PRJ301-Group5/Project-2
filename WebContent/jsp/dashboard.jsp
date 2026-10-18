@@ -25,11 +25,21 @@
     </div>
     <c:if test="${sessionScope.role == 'TEACHER' || sessionScope.role == 'ADMIN'}">
         <div class="actions">
+            <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/app/classes">
+                <i class="bi bi-collection"></i> Lớp học
+            </a>
             <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/projects">
                 <i class="bi bi-github"></i> Git Analytics
             </a>
             <a class="btn btn-primary" href="${pageContext.request.contextPath}/app/assignments">
                 <i class="bi bi-plus-lg"></i> Tạo bài tập
+            </a>
+        </div>
+    </c:if>
+    <c:if test="${sessionScope.role == 'STUDENT'}">
+        <div class="actions">
+            <a class="btn btn-primary spirit-loading" href="${pageContext.request.contextPath}/app/enroll">
+                <i class="bi bi-key"></i> Vào lớp bằng mã
             </a>
         </div>
     </c:if>

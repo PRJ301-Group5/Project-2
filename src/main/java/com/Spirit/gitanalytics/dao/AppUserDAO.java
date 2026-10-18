@@ -69,6 +69,22 @@ public class AppUserDAO {
         return list;
     }
 
+    /** Student đã enroll vào class. Dùng cho trang manage. */
+    public List<AppUser> findStudentsInClass(int classId) throws SQLException, ClassNotFoundException {
+        List<AppUser> list = new ArrayList<>();
+        String sql = "SELECT u.user_id, u.username, u.password_hash, u.full_name, u.email, u.phone, u.role, u.is_active, u.created_at "
+                   + "FROM AppUser u JOIN Enrollment e ON u.user_id = e.student_id "
+                   + "WHERE e.class_id = ? AND u.role = 'STUDENT' ORDER BY u.full_name";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, classId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(map(rs));
+            }
+        }
+        return list;
+    }
+
     public int insert(AppUser u) throws SQLException, ClassNotFoundException {
         String sql = "INSERT INTO AppUser(username, password_hash, full_name, email, phone, role) "
                    + "VALUES(?,?,?,?,?,?)";
