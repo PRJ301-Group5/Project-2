@@ -106,9 +106,12 @@
                 <configuration>
                     <webApp>
                         <contextPath>/gitanalytics</contextPath>
+                        <resourceBase>WebContent</resourceBase>
+                        <extraClasspath>target/classes</extraClasspath>
                     </webApp>
                     <httpConnector>
                         <port>8080</port>
+                        <host>0.0.0.0</host>
                     </httpConnector>
                     <scanIntervalSeconds>2</scanIntervalSeconds>
                 </configuration>
