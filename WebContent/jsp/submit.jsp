@@ -140,6 +140,48 @@
                     </ul>
                     <small class="text-muted">Upload thêm file mới ở trên sẽ được thêm vào bài nộp.</small>
                 </div>
+
+                <c:if test="${not empty artifact}">
+                    <div class="mb-4">
+                        <label class="form-label"><i class="bi bi-shield-check"></i> Artifact (ZIP + SHA-256)</label>
+                        <div class="alert alert-success mb-2 py-2">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div>
+                                    <i class="bi bi-file-earmark-zip"></i>
+                                    <strong>${artifact.zipStoredName}</strong>
+                                    <span class="text-muted ms-2">${artifact.humanSize} · ${artifact.fileCount} file</span>
+                                    <c:choose>
+                                        <c:when test="${artifact.verificationStatus == 'VERIFIED'}">
+                                            <span class="pill pill-success ms-2"><i class="bi bi-check-circle-fill"></i> VERIFIED</span>
+                                        </c:when>
+                                        <c:when test="${artifact.verificationStatus == 'TAMPERED'}">
+                                            <span class="pill pill-danger ms-2"><i class="bi bi-exclamation-octagon-fill"></i> TAMPERED</span>
+                                        </c:when>
+                                        <c:when test="${artifact.verificationStatus == 'MISSING'}">
+                                            <span class="pill pill-warning ms-2"><i class="bi bi-question-circle"></i> MISSING</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="pill pill-muted ms-2">PENDING</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <a class="btn btn-sm btn-orange"
+                                   href="${pageContext.request.contextPath}/app/artifact?submissionId=${submission.submissionId}">
+                                    <i class="bi bi-download"></i> Tải ZIP
+                                </a>
+                            </div>
+                            <div class="mt-2">
+                                <code class="small text-break" style="word-break: break-all;">SHA-256: ${artifact.sha256}</code>
+                                <c:if test="${not empty artifact.verifiedAt}">
+                                    <span class="text-muted ms-2 small">
+                                        <i class="bi bi-clock"></i> verify lúc
+                                        <fmt:formatDate value="${artifact.verifiedAt}" pattern="dd/MM HH:mm:ss"/>
+                                    </span>
+                                </c:if>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
             </c:if>
 
             <div class="d-flex gap-2">

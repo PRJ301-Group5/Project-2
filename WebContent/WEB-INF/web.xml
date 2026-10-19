@@ -59,6 +59,16 @@
         <url-pattern>/app/*</url-pattern>
     </filter-mapping>
 
+    <!-- ArtifactFilter: verify SHA-256 khi teacher tải ZIP (chạy SAU AuthFilter) -->
+    <filter>
+        <filter-name>ArtifactFilter</filter-name>
+        <filter-class>com.Spirit.gitanalytics.filter.ArtifactFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ArtifactFilter</filter-name>
+        <url-pattern>/app/artifact</url-pattern>
+    </filter-mapping>
+
     <!-- Start background services (DeadlineScheduler) -->
     <listener>
         <listener-class>com.Spirit.gitanalytics.listener.AppContextListener</listener-class>

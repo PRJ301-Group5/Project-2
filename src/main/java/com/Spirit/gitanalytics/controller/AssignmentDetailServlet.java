@@ -55,10 +55,20 @@ public class AssignmentDetailServlet extends HttpServlet {
                 // Load files cho mỗi submission
                 java.util.Map<Integer, List<com.Spirit.gitanalytics.model.SubmissionFile>> subFiles =
                     new java.util.HashMap<>();
+                // Load artifact ZIP+SHA-256 cho mỗi submission
+                java.util.Map<Integer, com.Spirit.gitanalytics.model.SubmissionArtifact> artifacts =
+                    new java.util.HashMap<>();
+                com.Spirit.gitanalytics.service.ArtifactService artifactSvc =
+                    new com.Spirit.gitanalytics.service.ArtifactService();
                 for (Submission s : subs) {
                     subFiles.put(s.getSubmissionId(), sfDao.findBySubmission(s.getSubmissionId()));
+                    try {
+                        com.Spirit.gitanalytics.model.SubmissionArtifact art = artifactSvc.find(s.getSubmissionId());
+                        if (art != null) artifacts.put(s.getSubmissionId(), art);
+                    } catch (Exception ignore) {}
                 }
                 req.setAttribute("subFilesMap", subFiles);
+                req.setAttribute("artifactsMap", artifacts);
             }
             req.getRequestDispatcher("/jsp/assignment-detail.jsp").forward(req, resp);
         } catch (SQLException | ClassNotFoundException ex) {

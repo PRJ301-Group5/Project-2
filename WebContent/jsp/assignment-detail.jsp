@@ -169,15 +169,27 @@
                                                     </div>
                                                 </c:if>
                                             </div>
-                                            <c:choose>
-                                                <c:when test="${s.score != null}">
-                                                    <span class="pill pill-success">${s.score}</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="pill pill-warning">Chờ chấm</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </div>
+                            <c:choose>
+                                <c:when test="${s.score != null}">
+                                    <span class="pill pill-success">${s.score}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="pill pill-warning">Chờ chấm</span>
+                                </c:otherwise>
+                            </c:choose>
+                                            </div>
+                                        <c:if test="${artifactsMap[s.submissionId] != null}">
+                                            <div class="mt-1">
+                                                <a class="btn btn-sm btn-outline-secondary"
+                                                   title="Tải ZIP artifact (đã verify SHA-256)"
+                                                   href="${pageContext.request.contextPath}/app/artifact?submissionId=${s.submissionId}">
+                                                    <i class="bi bi-file-earmark-zip"></i> ZIP
+                                                </a>
+                                                <code class="small text-muted" style="word-break: break-all;">
+                                                    ${artifactsMap[s.submissionId].sha256.substring(0,12)}…
+                                                </code>
+                                            </div>
+                                        </c:if>
                                         <a class="btn btn-sm btn-outline-primary mt-2"
                                            href="${pageContext.request.contextPath}/app/teacher/grading?submissionId=${s.submissionId}">
                                             <i class="bi bi-pencil-square"></i> Chấm

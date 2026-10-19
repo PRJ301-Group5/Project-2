@@ -9,6 +9,8 @@ import com.Spirit.gitanalytics.model.AppUser;
 import com.Spirit.gitanalytics.model.Assignment;
 import com.Spirit.gitanalytics.model.Notification;
 import com.Spirit.gitanalytics.model.Submission;
+import com.Spirit.gitanalytics.model.SubmissionFile;
+import com.Spirit.gitanalytics.service.ArtifactService;
 import com.Spirit.gitanalytics.util.FileUploadUtil;
 
 import javax.servlet.ServletException;
@@ -36,6 +38,7 @@ public class SubmissionServlet extends HttpServlet {
     private final AssignmentFileDAO afDao = new AssignmentFileDAO();
     private final SubmissionFileDAO sfDao = new SubmissionFileDAO();
     private final NotificationDAO notiDao = new NotificationDAO();
+    private final ArtifactService artifactService = new ArtifactService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -50,6 +53,13 @@ public class SubmissionServlet extends HttpServlet {
             req.setAttribute("assignmentFiles", afDao.findByAssignment(assignmentId));
             if (s != null) {
                 req.setAttribute("submissionFiles", sfDao.findBySubmission(s.getSubmissionId()));
+                try {
+                    com.Spirit.gitanalytics.model.SubmissionArtifact art =
+                        new com.Spirit.gitanalytics.service.ArtifactService().find(s.getSubmissionId());
+                    req.setAttribute("artifact", art);
+                } catch (Exception ex) {
+                    req.setAttribute("artifact", null);
+                }
             }
             req.getRequestDispatcher("/jsp/submit.jsp").forward(req, resp);
         } catch (SQLException | ClassNotFoundException ex) {
@@ -99,12 +109,12 @@ public class SubmissionServlet extends HttpServlet {
                 subDao.insert(s);
                 submissionId = s.getSubmissionId();
 
-                Notification n = new Notification();
-                n.setUserId(a.getCreatedBy());
-                n.setTitle("Bài nộp mới: " + a.getTitle());
-                n.setBody(user.getFullName() + " vừa nộp bài" + (uploaded.isEmpty() ? "." : " với " + uploaded.size() + " file.") );
-                n.setLink("/gitanalytics/app/assignments/detail?id=" + a.getAssignmentId());
-                try { notiDao.insert(n); } catch (Exception ignore) {}
+            Notification n = new Notification();
+            n.setUserId(a.getCreatedBy());
+            n.setTitle("Bài nộp mới: " + a.getTitle());
+            n.setBody(user.getFullName() + " vừa nộp bài" + (uploaded.isEmpty() ? "." : " với " + uploaded.size() + " file.") );
+            n.setLink("/app/assignments/detail?id=" + a.getAssignmentId());
+            try { notiDao.insert(n); } catch (Exception ignore) {}
             } else {
                 existing.setContent(content);
                 existing.setFilePath(filePath);
@@ -115,6 +125,17 @@ public class SubmissionServlet extends HttpServlet {
             // Lưu từng file
             for (FileUploadUtil.UploadResult r : uploaded) {
                 sfDao.insert(r.toSubmissionFile(submissionId));
+            }
+
+            // Nén ZIP + tính SHA-256 ngay khi nộp (4.4.1 + 4.4.2)
+            if (!uploaded.isEmpty()) {
+                try {
+                    String uploadRoot = FileUploadUtil.getRootDir(req);
+                    artifactService.createArtifact(submissionId, sfDao.findBySubmission(submissionId), uploadRoot);
+                } catch (Exception ex) {
+                    // Không fail cả request, chỉ log flash warning
+                    session.setAttribute("flash", "Bài đã lưu nhưng tạo artifact thất bại: " + ex.getMessage());
+                }
             }
 
             session.setAttribute("flash", "Đã lưu bài nộp" + (uploaded.isEmpty() ? "." : " với " + uploaded.size() + " file."));
