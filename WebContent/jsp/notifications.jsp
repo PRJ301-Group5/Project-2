@@ -49,7 +49,7 @@
                                     <p class="mb-1 text-muted">${n.body}</p>
                                     <div class="d-flex gap-2 align-items-center">
                                         <c:if test="${not empty n.link}">
-                                            <a href="${pageContext.request.contextPath}${n.link}" class="small">
+                                            <a href="${pageContext.request.contextPath}/app/notifications?id=${n.notificationId}" class="small">
                                                 <i class="bi bi-arrow-right-circle"></i> Xem chi tiết
                                             </a>
                                         </c:if>

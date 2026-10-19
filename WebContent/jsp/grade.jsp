@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="pageTitle" value="Chấm điểm" scope="request"/>
 <jsp:include page="header.jsp"/>
 
@@ -36,12 +37,47 @@
                 <h6 class="grade-section-title">Nội dung</h6>
                 <pre>${submission.content}</pre>
 
-                <c:if test="${not empty submission.filePath}">
-                    <h6 class="grade-section-title mt-4">Tệp đính kèm</h6>
-                    <a class="btn btn-outline-primary" href="${submission.filePath}" target="_blank" rel="noopener">
-                        <i class="bi bi-link-45deg"></i> ${submission.filePath}
-                    </a>
-                </c:if>
+                <h6 class="grade-section-title mt-4">
+                    <i class="bi bi-paperclip"></i> Tệp đính kèm từ sinh viên
+                    <c:if test="${not empty submissionFiles and submissionFiles.size() > 0}">
+                        <span class="pill pill-muted ms-2">${submissionFiles.size()} file</span>
+                    </c:if>
+                </h6>
+                <c:choose>
+                    <c:when test="${not empty submissionFiles and submissionFiles.size() > 0}">
+                        <ul class="file-list mb-3">
+                            <c:forEach var="f" items="${submissionFiles}">
+                                <li class="file-item uploaded">
+                                    <div class="file-icon">
+                                        <i class="bi bi-file-earmark${f.contentType != null and f.contentType.contains('pdf') ? '-pdf' : (f.contentType != null and f.contentType.contains('image') ? '-image' : '')}"></i>
+                                    </div>
+                                    <div class="file-info">
+                                        <a class="file-name"
+                                           href="${pageContext.request.contextPath}/app/files?type=submission&id=${f.fileId}">
+                                            ${f.fileName}
+                                        </a>
+                                        <div class="file-meta">
+                                            <span>${f.humanSize}</span> ·
+                                            <fmt:formatDate value="${f.uploadedAt}" pattern="dd/MM/yyyy HH:mm"/>
+                                        </div>
+                                    </div>
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="${pageContext.request.contextPath}/app/files?type=submission&id=${f.fileId}">
+                                        <i class="bi bi-download"></i> Tải xuống
+                                    </a>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:when>
+                    <c:when test="${not empty submission.filePath}">
+                        <a class="btn btn-outline-primary" href="${submission.filePath}" target="_blank" rel="noopener">
+                            <i class="bi bi-link-45deg"></i> ${submission.filePath}
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-muted fst-italic mb-0">Sinh viên không đính kèm file.</p>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </div>

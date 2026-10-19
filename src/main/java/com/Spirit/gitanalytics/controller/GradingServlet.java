@@ -5,6 +5,7 @@ import com.Spirit.gitanalytics.dao.AssignmentDAO;
 import com.Spirit.gitanalytics.dao.GradeDAO;
 import com.Spirit.gitanalytics.dao.NotificationDAO;
 import com.Spirit.gitanalytics.dao.SubmissionDAO;
+import com.Spirit.gitanalytics.dao.SubmissionFileDAO;
 import com.Spirit.gitanalytics.model.AppUser;
 import com.Spirit.gitanalytics.model.Assignment;
 import com.Spirit.gitanalytics.model.Grade;
@@ -30,6 +31,7 @@ import java.sql.SQLException;
 public class GradingServlet extends HttpServlet {
 
     private final SubmissionDAO subDao = new SubmissionDAO();
+    private final SubmissionFileDAO subFileDao = new SubmissionFileDAO();
     private final GradeDAO gradeDao = new GradeDAO();
     private final AssignmentDAO asmDao = new AssignmentDAO();
     private final AppUserDAO userDao = new AppUserDAO();
@@ -51,6 +53,8 @@ public class GradingServlet extends HttpServlet {
             Assignment a = asmDao.findById(s.getAssignmentId());
             req.setAttribute("submission", s);
             req.setAttribute("assignment", a);
+            // Load file đính kèm của sinh viên để teacher tải về xem
+            req.setAttribute("submissionFiles", subFileDao.findBySubmission(submissionId));
             req.getRequestDispatcher("/jsp/grade.jsp").forward(req, resp);
         } catch (SQLException | ClassNotFoundException ex) {
             throw new ServletException(ex);
@@ -93,7 +97,7 @@ public class GradingServlet extends HttpServlet {
             n.setUserId(student.getUserId());
             n.setTitle("Đã có điểm: " + a.getTitle());
             n.setBody("Bạn được " + score + "/" + a.getMaxScore() + ". Xem chi tiết.");
-            n.setLink("/gitanalytics/app/assignments/detail?id=" + a.getAssignmentId());
+            n.setLink("/app/assignments/detail?id=" + a.getAssignmentId());
             try { notiDao.insert(n); emailService.sendGradeNotice(student.getEmail(), a.getTitle(), score); } catch (Exception ignore) {}
 
             req.getSession().setAttribute("flash", "Đã lưu điểm " + score + "/" + a.getMaxScore() + " cho " + student.getFullName());

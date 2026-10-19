@@ -27,6 +27,20 @@ public class NotificationDAO {
         return list;
     }
 
+    public Notification findById(int notificationId, int userId) throws SQLException, ClassNotFoundException {
+        String sql = "SELECT notification_id, user_id, title, body, link, is_read, created_at "
+                   + "FROM Notification WHERE notification_id = ? AND user_id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, notificationId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return map(rs);
+            }
+        }
+        return null;
+    }
+
     public int countUnread(int userId) throws SQLException, ClassNotFoundException {
         String sql = "SELECT COUNT(*) FROM Notification WHERE user_id = ? AND is_read = 0";
         try (Connection con = DBConnection.getConnection();
