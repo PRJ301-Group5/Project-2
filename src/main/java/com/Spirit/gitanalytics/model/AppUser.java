@@ -15,6 +15,7 @@ public class AppUser {
     private String role;          // TEACHER / STUDENT / ADMIN
     private boolean active;
     private Timestamp createdAt;
+    private Timestamp lastLogin;   // lần đăng nhập thành công gần nhất
 
     public AppUser() {}
 
@@ -44,4 +45,7 @@ public class AppUser {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public Timestamp getLastLogin() { return lastLogin; }
+    public void setLastLogin(Timestamp lastLogin) { this.lastLogin = lastLogin; }
 }

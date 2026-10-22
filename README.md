@@ -232,6 +232,8 @@ Group5_GitAnalytics/
 | `/gitanalytics/app/teacher/grading`       | GET/POST | TEACHER (POST) | Chấm điểm |
 | `/gitanalytics/app/notifications`         | GET/POST | any          | Thông báo |
 | `/gitanalytics/app/profile`               | GET/POST | any          | Hồ sơ + đổi mật khẩu |
+| `/gitanalytics/app/login-history`          | GET   | any          | Lịch sử đăng nhập (TEACHER/ADMIN xem toàn hệ thống) |
+| `/gitanalytics/app/artifact`              | GET   | owner/teacher/admin | Tải ZIP artifact (đã verify SHA-256) |
 | `/gitanalytics/projects`                  | GET   | any          | Git analytics projects list (giữ nguyên) |
 
 ## 🛠 Công nghệ

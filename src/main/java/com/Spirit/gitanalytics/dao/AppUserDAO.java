@@ -17,7 +17,7 @@ import java.util.List;
 public class AppUserDAO {
 
     public AppUser findByUsername(String username) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at "
+        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at, last_login "
                    + "FROM AppUser WHERE username = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -30,7 +30,7 @@ public class AppUserDAO {
     }
 
     public AppUser findByEmail(String email) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at "
+        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at, last_login "
                    + "FROM AppUser WHERE email = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -43,7 +43,7 @@ public class AppUserDAO {
     }
 
     public AppUser findById(int id) throws SQLException, ClassNotFoundException {
-        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at "
+        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at, last_login "
                    + "FROM AppUser WHERE user_id = ?";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class AppUserDAO {
 
     public List<AppUser> findByRole(String role) throws SQLException, ClassNotFoundException {
         List<AppUser> list = new ArrayList<>();
-        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at "
+        String sql = "SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at, last_login "
                    + "FROM AppUser WHERE role = ? ORDER BY full_name";
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -72,7 +72,7 @@ public class AppUserDAO {
     /** Student đã enroll vào class. Dùng cho trang manage. */
     public List<AppUser> findStudentsInClass(int classId) throws SQLException, ClassNotFoundException {
         List<AppUser> list = new ArrayList<>();
-        String sql = "SELECT u.user_id, u.username, u.password_hash, u.full_name, u.email, u.phone, u.role, u.is_active, u.created_at "
+        String sql = "SELECT u.user_id, u.username, u.password_hash, u.full_name, u.email, u.phone, u.role, u.is_active, u.created_at, u.last_login "
                    + "FROM AppUser u JOIN Enrollment e ON u.user_id = e.student_id "
                    + "WHERE e.class_id = ? AND u.role = 'STUDENT' ORDER BY u.full_name";
         try (Connection con = DBConnection.getConnection();
@@ -145,6 +145,7 @@ public class AppUserDAO {
         u.setRole(rs.getString("role"));
         u.setActive(rs.getBoolean("is_active"));
         u.setCreatedAt(rs.getTimestamp("created_at"));
+        try { u.setLastLogin(rs.getTimestamp("last_login")); } catch (SQLException ignore) {}
         return u;
     }
 }

@@ -94,6 +94,9 @@
             <a class="nav-pill" href="${pageContext.request.contextPath}/exports">
                 <i class="bi bi-cloud-download"></i> Export History
             </a>
+            <a class="nav-pill" href="${pageContext.request.contextPath}/app/login-history">
+                <i class="bi bi-clock-history"></i> Lịch sử đăng nhập
+            </a>
             <a class="nav-pill" href="${pageContext.request.contextPath}/app/notifications">
                 <i class="bi bi-bell"></i> Thông báo
             </a>

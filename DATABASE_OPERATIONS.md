@@ -11,21 +11,28 @@ Tài liệu này liệt kê **mọi thao tác ghi/đọc database** trong code, 
 
 **URL:** `POST /login`
 **File:** `controller/LoginServlet.java`
-**DAO:** `AppUserDAO`
+**DAO:** `AppUserDAO`, `LoginHistoryDAO`
 
 ```sql
 -- AppUserDAO.findByUsername (line 20)
-SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at
+SELECT user_id, username, password_hash, full_name, email, phone, role, is_active, created_at, last_login
 FROM AppUser WHERE username = ?
 ```
 
 **Flow:**
 1. Đọc `AppUser` theo `username`
 2. Verify `password_hash` bằng BCrypt (`SecurityUtil.verifyPassword`)
-3. Lưu user vào `HttpSession` (KHÔNG ghi `last_login` xuống DB)
-4. Session timeout: 30 phút
+3. Ghi 1 dòng vào `LoginHistory` (kèm IP + user agent, SUCCESS/FAILED)
+4. Nếu thành công → cập nhật `AppUser.last_login = GETDATE()`
+5. Lưu user vào `HttpSession`
+6. Session timeout: 30 phút
 
-> ⚠️ **Đề xuất:** thêm cột `last_login_at` + cập nhật mỗi lần login thành công (hiện chưa có).
+**Xem lịch sử:** `GET /app/login-history`
+- STUDENT: chỉ xem lịch sử của chính mình
+- TEACHER/ADMIN: xem của mình + bảng audit toàn hệ thống (200 lần gần nhất)
+
+> ℹ️ **Migration:** `database/migrations/006_login_history.sql` — tạo bảng `LoginHistory` + cột `AppUser.last_login`.
+> Lưu ý: các cột chứa tiếng Việt dùng `NVARCHAR` (collation DB là `Vietnamese_CI_AS`, `VARCHAR` sẽ mất dấu).
 
 ---
 

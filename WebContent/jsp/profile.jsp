@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="pageTitle" value="Hồ sơ cá nhân" scope="request"/>
 <jsp:include page="header.jsp"/>
 
@@ -35,15 +36,33 @@
                         <input type="text" name="fullName" class="form-control" required
                                value="${sessionScope.currentUser.fullName}">
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="tel" name="phone" class="form-control" maxlength="20"
-                               value="${sessionScope.currentUser.phone}" placeholder="VD: 0901 234 567">
-                    </div>
-                    <button class="btn btn-primary spirit-loading" type="submit">
-                        <i class="bi bi-save"></i> Cập nhật thông tin
-                    </button>
-                </form>
+            <div class="mb-4">
+                <label class="form-label">Số điện thoại</label>
+                <input type="tel" name="phone" class="form-control" maxlength="20"
+                       value="${sessionScope.currentUser.phone}" placeholder="VD: 0901 234 567">
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Lần đăng nhập gần nhất</label>
+                <div class="form-control-plaintext">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.currentUser.lastLogin}">
+                            <i class="bi bi-clock-history"></i>
+                            <fmt:formatDate value="${sessionScope.currentUser.lastLogin}" pattern="dd/MM/yyyy HH:mm:ss"/>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="text-muted">Chưa đăng nhập lần nào</span>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+            <button class="btn btn-primary spirit-loading" type="submit">
+                <i class="bi bi-save"></i> Cập nhật thông tin
+            </button>
+            </form>
+            <a class="btn btn-outline-secondary mt-2"
+               href="${pageContext.request.contextPath}/app/login-history">
+                <i class="bi bi-clock-history"></i> Xem lịch sử đăng nhập
+            </a>
             </div>
         </div>
     </div>

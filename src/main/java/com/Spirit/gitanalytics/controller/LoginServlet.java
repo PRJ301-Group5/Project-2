@@ -1,7 +1,10 @@
 package com.Spirit.gitanalytics.controller;
 
 import com.Spirit.gitanalytics.dao.AppUserDAO;
+import com.Spirit.gitanalytics.dao.LoginHistoryDAO;
 import com.Spirit.gitanalytics.model.AppUser;
+import com.Spirit.gitanalytics.model.LoginHistory;
+import com.Spirit.gitanalytics.util.ClientIpUtil;
 import com.Spirit.gitanalytics.util.SecurityUtil;
 
 import javax.servlet.ServletException;
@@ -16,11 +19,15 @@ import java.sql.SQLException;
 /**
  * LoginServlet - GET hiển thị form, POST xác thực.
  * URL: /login
+ *
+ * Mọi lần đăng nhập (thành công / thất bại) đều được ghi vào bảng LoginHistory
+ * kèm IP + user agent, phục vụ audit và phát hiện đăng nhập bất thường.
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
     private final AppUserDAO userDAO = new AppUserDAO();
+    private final LoginHistoryDAO loginHistoryDAO = new LoginHistoryDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,16 +54,23 @@ public class LoginServlet extends HttpServlet {
         try {
             AppUser user = userDAO.findByUsername(username);
             if (user == null || !user.isActive()) {
+                recordLogin(req, username, null, "FAILED",
+                        (user == null) ? "Tài khoản không tồn tại" : "Tài khoản đã bị khoá");
                 req.setAttribute("error", "Tài khoản không tồn tại hoặc đã bị khoá.");
                 req.getRequestDispatcher("/jsp/login.jsp").forward(req, resp);
                 return;
             }
             if (!SecurityUtil.verifyPassword(password, user.getPasswordHash())) {
+                recordLogin(req, username, user.getUserId(), "FAILED", "Sai mật khẩu");
                 req.setAttribute("error", "Sai mật khẩu.");
                 req.getRequestDispatcher("/jsp/login.jsp").forward(req, resp);
                 return;
             }
             // OK
+            recordLogin(req, username, user.getUserId(), "SUCCESS", null);
+            try { loginHistoryDAO.updateLastLogin(user.getUserId()); } catch (Exception ignore) {}
+            try { user.setLastLogin(new java.sql.Timestamp(System.currentTimeMillis())); } catch (Exception ignore) {}
+
             HttpSession session = req.getSession(true);
             session.setAttribute("currentUser", user);
             session.setAttribute("role", user.getRole());
@@ -65,6 +79,23 @@ public class LoginServlet extends HttpServlet {
         } catch (SQLException | ClassNotFoundException ex) {
             req.setAttribute("error", "Lỗi hệ thống: " + ex.getMessage());
             req.getRequestDispatcher("/jsp/login.jsp").forward(req, resp);
+        }
+    }
+
+    /** Ghi 1 dòng vào LoginHistory. Không để lỗi audit làm hỏng luồng đăng nhập. */
+    private void recordLogin(HttpServletRequest req, String username, Integer userId,
+                             String status, String reason) {
+        try {
+            LoginHistory h = new LoginHistory();
+            h.setUserId(userId);
+            h.setUsername(username);
+            h.setIpAddress(ClientIpUtil.getClientIp(req));
+            h.setUserAgent(ClientIpUtil.getUserAgent(req));
+            h.setLoginStatus(status);
+            h.setFailureReason(reason);
+            loginHistoryDAO.insert(h);
+        } catch (Exception ignore) {
+            // Audit lỗi không được làm hỏng trải nghiệm đăng nhập
         }
     }
 
