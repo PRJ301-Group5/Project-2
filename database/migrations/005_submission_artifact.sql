@@ -25,8 +25,14 @@ CREATE TABLE dbo.SubmissionArtifact (
 );
 GO
 
-CREATE INDEX IX_Artifact_Sub ON dbo.SubmissionArtifact(submission_id);
-CREATE INDEX IX_Artifact_Sha ON dbo.SubmissionArtifact(sha256);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_Artifact_Sub' AND object_id = OBJECT_ID('dbo.SubmissionArtifact'))
+    CREATE INDEX IX_Artifact_Sub ON dbo.SubmissionArtifact(submission_id);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_Artifact_Sha' AND object_id = OBJECT_ID('dbo.SubmissionArtifact'))
+    CREATE INDEX IX_Artifact_Sha ON dbo.SubmissionArtifact(sha256);
 GO
 
 PRINT '>> Migration 005 applied: SubmissionArtifact table + indexes.';

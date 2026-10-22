@@ -17,6 +17,13 @@
 sqlcmd -S localhost -E -b -i database\bootstrap.sql
 sqlcmd -S localhost -E -b -i database\grading_schema.sql
 
+# 2b. Chạy các migration (theo thứ tự 002 -> 006)
+sqlcmd -S localhost -E -b -i database\migrations\002_file_upload_and_classes.sql
+sqlcmd -S localhost -E -b -i database\migrations\003_full_seed.sql
+sqlcmd -S localhost -E -b -i database\migrations\004_per_subject_assignments.sql
+sqlcmd -S localhost -E -b -i database\migrations\005_submission_artifact.sql
+sqlcmd -S localhost -E -b -i database\migrations\006_login_history.sql
+
 # 3. Cập nhật password hash thật cho tài khoản demo
 # (đã chạy 1 lần - hash BCrypt của "Password@123")
 # SELECT username, password_hash FROM AppUser;

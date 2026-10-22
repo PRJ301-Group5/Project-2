@@ -8,7 +8,15 @@ sqlcmd -S localhost -E -b -i database\grading_schema.sql
 sqlcmd -S localhost -E -b -i database\migrations\002_file_upload_and_classes.sql
 sqlcmd -S localhost -E -b -i database\migrations\003_full_seed.sql
 sqlcmd -S localhost -E -b -i database\migrations\004_per_subject_assignments.sql
+sqlcmd -S localhost -E -b -i database\migrations\005_submission_artifact.sql
+sqlcmd -S localhost -E -b -i database\migrations\006_login_history.sql
 ```
+
+> **Lưu ý:** `004_per_subject_assignments.sql` có `DELETE` cứng ở đầu script (wipe assignment + submission + grade để re-seed).
+> **Không chạy lại** trên DB đang có dữ liệu demo. Nếu cần khôi phục dữ liệu demo đã bị wipe, chạy:
+> ```powershell
+> sqlcmd -S localhost -E -b -d Spirit_GitAnalytics -i database\migrations\007_restore_demo_data.sql
+> ```
 
 Sau khi chạy, **bắt buộc đổi mật khẩu demo** vì `003_full_seed.sql` chèn hash BCrypt placeholder. Chạy lệnh này để set đúng hash cho `Password@123`:
 
@@ -42,6 +50,8 @@ WHERE username IN ('admin','teacher1','teacher2','student1','student2','student3
 | ContributionScore | 5 |
 | AnalysisHistory | 0 |
 | ExportHistory | 3 |
+| SubmissionArtifact | 0 (tự sinh khi sinh viên nộp bài) |
+| LoginHistory | 0 (tự sinh khi có đăng nhập) |
 
 ## Tài khoản demo
 

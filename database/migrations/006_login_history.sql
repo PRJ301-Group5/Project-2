@@ -32,9 +32,19 @@ CREATE TABLE dbo.LoginHistory (
 GO
 
 -- 3) Index: tra cứu nhanh theo user + thời gian
-CREATE INDEX IX_LoginHistory_User ON dbo.LoginHistory(user_id, login_at DESC);
-CREATE INDEX IX_LoginHistory_Time ON dbo.LoginHistory(login_at DESC);
-CREATE INDEX IX_LoginHistory_Username ON dbo.LoginHistory(username, login_at DESC);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_LoginHistory_User' AND object_id = OBJECT_ID('dbo.LoginHistory'))
+    CREATE INDEX IX_LoginHistory_User ON dbo.LoginHistory(user_id, login_at DESC);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_LoginHistory_Time' AND object_id = OBJECT_ID('dbo.LoginHistory'))
+    CREATE INDEX IX_LoginHistory_Time ON dbo.LoginHistory(login_at DESC);
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = 'IX_LoginHistory_Username' AND object_id = OBJECT_ID('dbo.LoginHistory'))
+    CREATE INDEX IX_LoginHistory_Username ON dbo.LoginHistory(username, login_at DESC);
 GO
 
 PRINT '>> Migration 006 applied: LoginHistory table + AppUser.last_login.';
