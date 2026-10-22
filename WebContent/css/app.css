@@ -208,6 +208,16 @@ body.auth-bg {
 }
 .spirit-topbar .role-pill.role-teacher { background: var(--spirit-orange-tint); color: var(--spirit-orange); }
 .spirit-topbar .role-pill.role-admin { background: #F3E8FF; color: #7C3AED; }
+.spirit-topbar .user-code {
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border-radius: var(--r-pill);
+    background: var(--bg-surface);
+    border: 1px dashed var(--border-medium);
+    color: var(--text-soft);
+}
 
 .spirit-bell {
     position: relative;

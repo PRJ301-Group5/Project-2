@@ -66,8 +66,17 @@
     </div>
     <div class="card-body">
         <form method="post" action="${pageContext.request.contextPath}/app/submissions"
-              enctype="multipart/form-data" class="spirit-auto-submit">
+              enctype="multipart/form-data" class="spirit-auto-submit" id="submitForm">
             <input type="hidden" name="assignmentId" value="${assignment.assignmentId}">
+            <input type="hidden" name="submitToken" value="${submitToken}">
+
+            <c:if test="${graded}">
+                <div class="alert alert-warning mb-4">
+                    <i class="bi bi-lock-fill"></i>
+                    <strong>Bài đã được chấm và đã khóa.</strong>
+                    Bạn không thể nộp lại hoặc chỉnh sửa bài nữa.
+                </div>
+            </c:if>
 
             <c:if test="${not empty submission}">
                 <c:choose>
@@ -94,14 +103,21 @@
             <div class="mb-3">
                 <label class="form-label">Nội dung bài làm</label>
                 <textarea name="content" class="form-control" rows="6" maxlength="10000"
-                          placeholder="Dán link GitHub repo, gist hoặc nội dung bài làm của bạn…">${submission.content}</textarea>
+                          placeholder="Dán link GitHub repo, gist hoặc nội dung bài làm của bạn…"><c:choose>
+                    <c:when test="${not empty formContent}">${formContent}</c:when>
+                    <c:otherwise>${submission.content}</c:otherwise>
+                </c:choose></textarea>
                 <small class="text-muted">Tối đa 10,000 ký tự</small>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Hoặc đường dẫn file (link Google Drive, GitHub…)</label>
                 <input type="text" name="filePath" class="form-control" maxlength="500"
-                       value="${submission.filePath}" placeholder="https://github.com/… hoặc đường dẫn file">
+                       value="<c:choose>
+                           <c:when test="${not empty formFilePath}">${formFilePath}</c:when>
+                           <c:otherwise>${submission.filePath}</c:otherwise>
+                       </c:choose>"
+                       placeholder="https://github.com/… hoặc đường dẫn file">
             </div>
 
             <div class="mb-4">
@@ -185,9 +201,18 @@
             </c:if>
 
             <div class="d-flex gap-2">
-                <button class="btn btn-primary spirit-loading" type="submit">
-                    <i class="bi bi-check2"></i> Lưu bài nộp
-                </button>
+                <c:choose>
+                    <c:when test="${graded}">
+                        <button class="btn btn-secondary" type="button" disabled>
+                            <i class="bi bi-lock-fill"></i> Bài đã chấm — không thể chỉnh sửa
+                        </button>
+                    </c:when>
+                    <c:otherwise>
+                        <button class="btn btn-primary spirit-loading" type="submit" id="submitBtn">
+                            <i class="bi bi-check2"></i> Lưu bài nộp
+                        </button>
+                    </c:otherwise>
+                </c:choose>
                 <a class="btn btn-outline-secondary"
                    href="${pageContext.request.contextPath}/app/assignments/detail?id=${assignment.assignmentId}">
                     <i class="bi bi-x-lg"></i> Huỷ
@@ -199,10 +224,32 @@
 
 <script>
 (function() {
+    const form = document.getElementById('submitForm');
     const drop = document.getElementById('fileDrop');
     const input = document.getElementById('fileInput');
     const list = document.getElementById('fileList');
     const browse = document.getElementById('browseBtn');
+    const btn = document.getElementById('submitBtn');
+
+    // ---- Chống double-submit: khoá nút ngay khi submit ----
+    if (form && btn) {
+        let submitting = false;
+        form.addEventListener('submit', function () {
+            if (submitting) { return; }
+            submitting = true;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang nộp bài…';
+        });
+        // Nếu trình duyệt chặn submit (validation fail) -> mở lại nút
+        window.setTimeout(function () {
+            if (submitting && form.checkValidity && !form.checkValidity()) {
+                submitting = false;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check2"></i> Lưu bài nộp';
+            }
+        }, 0);
+    }
+
     if (!drop) return;
     browse.addEventListener('click', e => { e.preventDefault(); input.click(); });
     drop.addEventListener('click', e => { if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') input.click(); });

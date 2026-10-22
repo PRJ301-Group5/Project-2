@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
 public class RegisterServlet extends HttpServlet {
 
     private static final Pattern EMAIL = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    /** Mã định danh: MSSV (SE + 6 chữ số) hoặc mã thẻ GV (GV + 4 chữ số). */
+    private static final Pattern CODE_STUDENT = Pattern.compile("^SE[0-9]{6}$");
+    private static final Pattern CODE_TEACHER = Pattern.compile("^GV[0-9]{4}$");
     private final AppUserDAO userDAO = new AppUserDAO();
     private final OtpCodeDAO otpDAO = new OtpCodeDAO();
     private final EmailService emailService = new EmailService();
@@ -52,6 +55,7 @@ public class RegisterServlet extends HttpServlet {
         String fullName = trim(req.getParameter("fullName"));
         String email    = trim(req.getParameter("email"));
         String role     = req.getParameter("role");
+        String userCode = trim(req.getParameter("userCode")).toUpperCase();
 
         // Validation
         if (username.isEmpty() || username.length() < 3) {
@@ -81,8 +85,34 @@ public class RegisterServlet extends HttpServlet {
         }
         if (!"TEACHER".equals(role) && !"STUDENT".equals(role)) {
             req.setAttribute("error", "Role phải là TEACHER hoặc STUDENT.");
+            req.setAttribute("formRole", role);
             req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
             return;
+        }
+        // Mã định danh bắt buộc, khác nhau theo vai trò
+        if (userCode.isEmpty()) {
+            req.setAttribute("error", "Vui lòng nhập mã định danh của bạn.");
+            req.setAttribute("formRole", role);
+            req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
+            return;
+        }
+        Pattern codePattern;
+        if ("STUDENT".equals(role)) {
+            codePattern = CODE_STUDENT;
+            if (!codePattern.matcher(userCode).matches()) {
+                req.setAttribute("error", "MSSV không hợp lệ. Định dạng: SE + 6 chữ số (VD: SE123456).");
+                req.setAttribute("formRole", role);
+                req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
+                return;
+            }
+        } else {
+            codePattern = CODE_TEACHER;
+            if (!codePattern.matcher(userCode).matches()) {
+                req.setAttribute("error", "Mã thẻ giảng viên không hợp lệ. Định dạng: GV + 4 chữ số (VD: GV0001).");
+                req.setAttribute("formRole", role);
+                req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
+                return;
+            }
         }
         try {
             if (userDAO.findByUsername(username) != null) {
@@ -92,6 +122,12 @@ public class RegisterServlet extends HttpServlet {
             }
             if (userDAO.findByEmail(email) != null) {
                 req.setAttribute("error", "Email đã được sử dụng.");
+                req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
+                return;
+            }
+            if (userDAO.findByUserCode(userCode) != null) {
+                req.setAttribute("error", "Mã định danh đã được sử dụng. Vui lòng chọn mã khác.");
+                req.setAttribute("formRole", role);
                 req.getRequestDispatcher("/jsp/register.jsp").forward(req, resp);
                 return;
             }
@@ -112,6 +148,7 @@ public class RegisterServlet extends HttpServlet {
             session.setAttribute("pendingFullName", fullName);
             session.setAttribute("pendingEmail", email);
             session.setAttribute("pendingRole", role);
+            session.setAttribute("pendingUserCode", userCode);
             session.setAttribute("demoOtp", code); // chỉ để demo UI
 
             req.setAttribute("email", email);
@@ -150,6 +187,7 @@ public class RegisterServlet extends HttpServlet {
             u.setFullName((String) session.getAttribute("pendingFullName"));
             u.setEmail(email);
             u.setRole((String) session.getAttribute("pendingRole"));
+            u.setUserCode((String) session.getAttribute("pendingUserCode"));
             u.setActive(true);
             userDAO.insert(u);
             otpDAO.markUsed(otp.getOtpId());
@@ -160,6 +198,7 @@ public class RegisterServlet extends HttpServlet {
             session.removeAttribute("pendingFullName");
             session.removeAttribute("pendingEmail");
             session.removeAttribute("pendingRole");
+            session.removeAttribute("pendingUserCode");
             session.removeAttribute("demoOtp");
 
             req.setAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");

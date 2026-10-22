@@ -2,6 +2,7 @@ package com.Spirit.gitanalytics.controller;
 
 import com.Spirit.gitanalytics.dao.AssignmentDAO;
 import com.Spirit.gitanalytics.dao.AssignmentFileDAO;
+import com.Spirit.gitanalytics.dao.GradeDAO;
 import com.Spirit.gitanalytics.dao.SubmissionDAO;
 import com.Spirit.gitanalytics.dao.SubmissionFileDAO;
 import com.Spirit.gitanalytics.model.AppUser;
@@ -31,6 +32,7 @@ public class AssignmentDetailServlet extends HttpServlet {
     private final SubmissionDAO subDao = new SubmissionDAO();
     private final AssignmentFileDAO afDao = new AssignmentFileDAO();
     private final SubmissionFileDAO sfDao = new SubmissionFileDAO();
+    private final GradeDAO gradeDao = new GradeDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -48,6 +50,9 @@ public class AssignmentDetailServlet extends HttpServlet {
                 req.setAttribute("mySubmission", mine);
                 if (mine != null) {
                     req.setAttribute("mySubmissionFiles", sfDao.findBySubmission(mine.getSubmissionId()));
+                    // Đã chấm -> khóa bài, sinh viên không nộp/sửa được nữa
+                    req.setAttribute("mySubmissionGraded",
+                            gradeDao.findBySubmission(mine.getSubmissionId()) != null);
                 }
             } else {
                 List<Submission> subs = subDao.findByAssignment(id);

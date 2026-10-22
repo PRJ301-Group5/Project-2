@@ -54,12 +54,23 @@
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" required value="${param.email}" placeholder="example@fpt.edu.vn">
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label">Vai trò</label>
-                            <select name="role" class="form-select" required>
-                                <option value="STUDENT" ${param.role == 'STUDENT' ? 'selected' : ''}>Student — sinh viên</option>
+                            <select name="role" id="roleSelect" class="form-select" required>
+                                <option value="STUDENT" ${param.role == 'STUDENT' or empty param.role ? 'selected' : ''}>Student — sinh viên</option>
                                 <option value="TEACHER" ${param.role == 'TEACHER' ? 'selected' : ''}>Teacher — giảng viên</option>
                             </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" id="userCodeLabel">MSSV</label>
+                            <input type="text" name="userCode" id="userCodeInput" class="form-control" required
+                                   maxlength="8" value="${param.userCode}"
+                                   placeholder="SE123456"
+                                   pattern="(SE[0-9]{6}|GV[0-9]{4})"
+                                   title="Sinh viên: SE + 6 chữ số (VD: SE123456). Giảng viên: GV + 4 chữ số (VD: GV0001).">
+                            <small class="text-muted" id="userCodeHint">
+                                <i class="bi bi-info-circle"></i> Sinh viên: SE + 6 chữ số (VD: SE123456)
+                            </small>
                         </div>
                         <button class="btn btn-primary btn-lg w-100 spirit-loading">
                             <i class="bi bi-send"></i> Gửi mã OTP
@@ -74,5 +85,26 @@
         </div>
     </div>
 </div>
+<script>
+(function () {
+    var roleSelect = document.getElementById('roleSelect');
+    var codeInput = document.getElementById('userCodeInput');
+    var codeLabel = document.getElementById('userCodeLabel');
+    var codeHint  = document.getElementById('userCodeHint');
+    if (!roleSelect || !codeInput) return;
+
+    function sync() {
+        var isStudent = roleSelect.value === 'STUDENT';
+        codeLabel.textContent = isStudent ? 'MSSV' : 'Mã thẻ giảng viên';
+        codeInput.placeholder = isStudent ? 'SE123456' : 'GV0001';
+        codeInput.setAttribute('pattern', isStudent ? 'SE[0-9]{6}' : 'GV[0-9]{4}');
+        codeHint.innerHTML = isStudent
+            ? '<i class="bi bi-info-circle"></i> Sinh viên: SE + 6 chữ số (VD: SE123456)'
+            : '<i class="bi bi-info-circle"></i> Giảng viên: GV + 4 chữ số (VD: GV0001)';
+    }
+    roleSelect.addEventListener('change', sync);
+    sync();
+})();
+</script>
 </body>
 </html>

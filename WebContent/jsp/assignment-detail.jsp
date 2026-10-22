@@ -114,10 +114,20 @@
                                 </c:otherwise>
                             </c:choose>
 
-                            <a class="btn btn-orange spirit-loading"
-                               href="${pageContext.request.contextPath}/app/submissions?assignmentId=${assignment.assignmentId}">
-                                <i class="bi bi-pencil"></i> Sửa bài
-                            </a>
+                            <c:choose>
+                                <c:when test="${mySubmissionGraded}">
+                                    <button class="btn btn-secondary" type="button" disabled
+                                            title="Bài đã được chấm, không thể nộp lại hoặc chỉnh sửa">
+                                        <i class="bi bi-lock-fill"></i> Đã chấm — không thể sửa
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <a class="btn btn-orange spirit-loading"
+                                       href="${pageContext.request.contextPath}/app/submissions?assignmentId=${assignment.assignmentId}">
+                                        <i class="bi bi-pencil"></i> Sửa bài
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
                         </c:when>
                         <c:otherwise>
                             <div class="empty-state" style="padding: 32px 16px;">

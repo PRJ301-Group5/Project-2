@@ -16,29 +16,29 @@ DECLARE @pwd VARCHAR(255) = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJ
 
 -- Admin
 IF NOT EXISTS (SELECT 1 FROM dbo.AppUser WHERE username = 'admin')
-INSERT INTO dbo.AppUser (username, password_hash, full_name, email, phone, role)
-VALUES ('admin', @pwd, N'Quản trị viên', 'admin@fpt.edu.vn', '0900000000', 'ADMIN');
+INSERT INTO dbo.AppUser (username, password_hash, full_name, email, phone, role, user_code)
+VALUES ('admin', @pwd, N'Quản trị viên', 'admin@fpt.edu.vn', '0900000000', 'ADMIN', 'AD0001');
 GO
 
 -- Teacher 2
 IF NOT EXISTS (SELECT 1 FROM dbo.AppUser WHERE username = 'teacher2')
-INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role)
+INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role, user_code)
 VALUES ('teacher2', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-        N'Trần Văn Hùng', 'teacher2@fpt.edu.vn', 'TEACHER');
+        N'Trần Văn Hùng', 'teacher2@fpt.edu.vn', 'TEACHER', 'GV0002');
 GO
 
 IF NOT EXISTS (SELECT 1 FROM dbo.AppUser WHERE username = 'teacher1')
-INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role)
+INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role, user_code)
 VALUES ('teacher1', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
-        N'Nguyễn Thị Lan', 'teacher1@fpt.edu.vn', 'TEACHER');
+        N'Nguyễn Thị Lan', 'teacher1@fpt.edu.vn', 'TEACHER', 'GV0001');
 GO
 
 -- Students (4..9, students 1..3 đã có sẵn)
 IF NOT EXISTS (SELECT 1 FROM dbo.AppUser WHERE username = 'student4')
-INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role) VALUES
-('student4', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Đỗ Văn Khang', 'student4@fpt.edu.vn', 'STUDENT'),
-('student5', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Vũ Thị Lan',  'student5@fpt.edu.vn', 'STUDENT'),
-('student6', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Phan Minh Quân','student6@fpt.edu.vn', 'STUDENT');
+INSERT INTO dbo.AppUser (username, password_hash, full_name, email, role, user_code) VALUES
+('student4', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Đỗ Văn Khang', 'student4@fpt.edu.vn', 'STUDENT', 'SE100004'),
+('student5', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Vũ Thị Lan',  'student5@fpt.edu.vn', 'STUDENT', 'SE100005'),
+('student6', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Phan Minh Quân','student6@fpt.edu.vn', 'STUDENT', 'SE100006');
 GO
 
 -- =============================================================

@@ -50,13 +50,25 @@ public class ArtifactService {
         String relativePath = subDir + "/" + storedName;
 
         int fileCount = 0;
+        java.util.Set<String> entryNames = new java.util.LinkedHashSet<>();
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
             for (SubmissionFile f : files) {
                 Path src = Paths.get(uploadRootDir, f.getFilePath());
                 if (!Files.exists(src)) continue; // skip missing file
                 // Tên entry trong ZIP: file gốc
                 String entryName = f.getFileName();
-                ZipEntry entry = new ZipEntry(entryName);
+                // Tránh ZipException: duplicate entry khi SV upload lại file trùng tên.
+                // Đánh số hậu tố để mỗi entry là duy nhất trong ZIP.
+                String unique = entryName;
+                int n = 1;
+                while (!entryNames.add(unique)) {
+                    int dot = entryName.lastIndexOf('.');
+                    unique = (dot > 0)
+                            ? entryName.substring(0, dot) + " (" + n + ")" + entryName.substring(dot)
+                            : entryName + " (" + n + ")";
+                    n++;
+                }
+                ZipEntry entry = new ZipEntry(unique);
                 entry.setSize(Files.size(src));
                 zos.putNextEntry(entry);
                 Files.copy(src, zos);

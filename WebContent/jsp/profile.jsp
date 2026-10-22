@@ -28,6 +28,16 @@
                         <input type="text" class="form-control" value="${sessionScope.currentUser.username}" readonly>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">
+                            <c:choose>
+                                <c:when test="${sessionScope.currentUser.role == 'STUDENT'}">MSSV</c:when>
+                                <c:when test="${sessionScope.currentUser.role == 'TEACHER'}">Mã thẻ giảng viên</c:when>
+                                <c:otherwise>Mã định danh</c:otherwise>
+                            </c:choose>
+                        </label>
+                        <input type="text" class="form-control" value="${sessionScope.currentUser.userCode}" readonly>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" class="form-control" value="${sessionScope.currentUser.email}" readonly>
                     </div>

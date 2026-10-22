@@ -45,6 +45,9 @@
                 <span class="user-chip d-none d-md-inline-flex">
                     <span class="spirit-avatar">${initials}</span>
                     <span class="d-none d-lg-inline">${u.fullName}</span>
+                    <c:if test="${not empty u.userCode}">
+                        <code class="user-code" title="Mã định danh tài khoản">${u.userCode}</code>
+                    </c:if>
                     <span class="role-pill role-${fn:toLowerCase(u.role)}">${u.role}</span>
                 </span>
 

@@ -18,9 +18,19 @@ CREATE TABLE dbo.AppUser (
     email             VARCHAR(150) UNIQUE NOT NULL,
     phone             VARCHAR(20),
     role              VARCHAR(20)  NOT NULL CHECK (role IN ('TEACHER','STUDENT','ADMIN')),
+    user_code         VARCHAR(20)  NULL,   -- MSSV (STUDENT) / Ma the GV (TEACHER)
     is_active         BIT DEFAULT 1,
     created_at        DATETIME DEFAULT GETDATE()
 );
+GO
+
+-- MSSV / ma the GV phai la duy nhat toan he thong
+IF OBJECT_ID('dbo.AppUser', 'U') IS NOT NULL
+   AND NOT EXISTS (SELECT 1 FROM sys.indexes
+                   WHERE name = 'UX_AppUser_UserCode' AND object_id = OBJECT_ID('dbo.AppUser'))
+    CREATE UNIQUE INDEX UX_AppUser_UserCode
+        ON dbo.AppUser(user_code)
+        WHERE user_code IS NOT NULL;
 GO
 
 -- -------------------------------------------------------------

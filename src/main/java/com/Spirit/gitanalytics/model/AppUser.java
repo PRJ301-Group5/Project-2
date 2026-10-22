@@ -13,6 +13,7 @@ public class AppUser {
     private String email;
     private String phone;
     private String role;          // TEACHER / STUDENT / ADMIN
+    private String userCode;      // MSSV (STUDENT) / Mã thẻ GV (TEACHER) / Mã Admin
     private boolean active;
     private Timestamp createdAt;
     private Timestamp lastLogin;   // lần đăng nhập thành công gần nhất
@@ -39,6 +40,9 @@ public class AppUser {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getUserCode() { return userCode; }
+    public void setUserCode(String userCode) { this.userCode = userCode; }
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
